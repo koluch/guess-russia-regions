@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>Хорошо ли вы знаете Россию?</title>
+    <meta property="og:title" content="Хорошо ли вы знаете Россию?"/>
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content="Игра, в которой нужно правильно угадать расположение регионов России" />
+    <meta property="og:image" content="http://koluch.github.io/guess-russia-regions/logo200x200.png" />
+
+    <style type="text/css">
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #map-canvas {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+    <script type="text/javascript"
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDQhKdhNpGBQ1GroxJLj9YBc40s2Euzmbc"></script>
+    <script type="text/javascript" src="tools.js"></script>
+    <script type="text/javascript" src="infobox.js"></script>
+    <script type="text/javascript" src="labels.js"></script>
+    <script type="text/javascript" src="drawing.js"></script>
+    <script type="text/javascript" src="app_state.js"></script>
+    <script type="text/javascript" src="game_state.js"></script>
+    <script type="text/javascript" src="language.js"></script>
+    <script type="text/javascript" src="sharing.js"></script>
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function(event) {
+            sharing.init($(".share_panel"));
+        });
+    </script>
+    <script type="text/javascript" src="main.js"></script>
+    <link rel="stylesheet" href="main.css"/>
+
+</head>
+<body>
+<div id="map-canvas"></div>
+
+<div id="game_state">
+    <div id="stats" class="fix pan hidden">
+        <div>Ошибок: <span id="mistakes_count"></span>/<span id="max_mistakes"></span></div>
+        <div>Уровень: <span id="level"></span></div>
+    </div>
+
+    <div id="current_region_wrapper" class="hcenter_wrapper fix hidden">
+        <div class="pan"><span id="current_region"></span> (<span id="current_region_num"></span>/<span
+                id="total_regions"></span>)
+        </div>
+    </div>
+
+    <div id="correct_msg_wrapper" class="message hcenter_wrapper fix hidden">
+        <div class="pan">Правильно!</div>
+    </div>
+
+    <div id="wrong_msg_wrapper" class="message hcenter_wrapper fix hidden">
+        <div class="pan">Неправильно!</div>
+    </div>
+
+    <div id="next_level_msg_wrapper" class="message hcenter_wrapper fix hidden">
+        <div class="pan">Следующий уровень!</div>
+    </div>
+
+</div>
+
+
+<div class="modal hidden" id="modal_game_start">
+    <div class="modal_row">
+        <div class="modal_cell">
+            <div class="modal_body">
+
+                <h1>Хорошо ли вы знаете Россию?</h1>
+
+                <p>Вам нужно правильно указать расположение всех регионов России. Игра состоит из 8 уровней по
+                    10 регионов в каждом (примерно:), после каждого уровня жизни восстанавливаются.</p>
+
+                <p>Сделано по мотивам
+                    игры &ldquo;<a href="http://www.buzzfeed.com/robinedds/how-well-do-you-actually-know-the-us-states">How Well Do You Actually Know The US States</a>&rdquo;</p>
+
+                <button id="start_game_button">Старт</button>
+                <p><label><input type="checkbox" id="crimea_belongs_to_us"/> Крым наш</label></p>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal hidden" id="modal_game_finish">
+    <div class="modal_row">
+        <div class="modal_cell">
+            <div class="modal_body">
+
+                <h1 id="finish_header"></h1>
+
+                <div id="finish_msg"></div>
+
+                <div class="share_panel">
+                    <!-- Filled dynamically -->
+                </div>
+
+                <div style="text-align: center">
+                    <button id="once_again_button">Еще раз!</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modal_bg" class="hidden">
+</div>
+
+</body>
+</html>

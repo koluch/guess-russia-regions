@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Drawing tools</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <style>
+        html, body, #map-canvas {
+            height: 100%;
+            margin: 0px;
+            padding: 0px
+        }
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=drawing"></script>
+    <script src="infobox.js"></script>
+    <script src="tools.js"></script>
+    <script>
+
+        function initialize() {
+
+
+            var mapOptions = {
+                center: {lat: 62.271565, lng: 83.775499},
+                zoom: 5
+            };
+
+            map = new google.maps.Map(document.getElementById('map-canvas'),
+                    mapOptions);
+
+            var defaultPolyOptions = {
+                fillColor: '#ffffAA',
+                fillOpacity: 0.5,
+                strokeWeight: 1,
+                strokeColor: "black",
+                clickable: true,
+                editable: false,
+                draggable: false,
+                zIndex: 1
+            };
+
+            var drawingPolyOptions = {
+                fillColor: '#ffffAA',
+                fillOpacity: 0.5,
+                strokeWeight: 1,
+                strokeColor: "red",
+                clickable: true,
+                editable: false,
+                draggable: false,
+                zIndex: 1
+            };
+
+            var currentPolyOpts = {
+                fillColor: '#aaFFaa',
+                fillOpacity: 0.5,
+                strokeWeight: 1,
+                strokeColor:  "black",
+                clickable: true,
+                editable: true,
+                draggable: false,
+                zIndex: 1
+            };
+
+            var drawingManager = new google.maps.drawing.DrawingManager({
+                drawingMode: google.maps.drawing.OverlayType.POLYLINE,
+                drawingControl: true,
+                drawingControlOptions: {
+                    position: google.maps.ControlPosition.TOP_CENTER,
+                    drawingModes: [
+                        google.maps.drawing.OverlayType.POLYGON,
+                        google.maps.drawing.OverlayType.POLYLINE
+                    ]
+                },
+                polygonOptions: drawingPolyOptions
+            });
+            drawingManager.setMap(map);
+
+            polygons = [];
+
+            var id = 0;
+            window.current = null;
+            window.currentPath = null;
+            window.currentPointIndex = null;
+
+
+            var onClick = function () {
+                newCurrent(this)
+            };
+
+            var onMovePoint = function(pointIndex, point){
+                currentPointIndex = pointIndex;
+                currentPoint = point;
+                currentPath = this;
+            };
+
+            function registerPolygon(polygon) {
+                polygon.setOptions(defaultPolyOptions);
+                polygon.id = id++;
+                polygon.setMap(map);
+                google.maps.event.addListener(polygon, "click", onClick);
+
+                for (var i = 0; i < polygon.getPaths().getLength(); i++) {
+                    var path = polygon.getPaths().getAt(i);
+                    google.maps.event.addListener(path, "set_at", onMovePoint);
+
+                }
+
+                if(polygon.title) showLabel(polygon.title, polygon.getPaths().getAt(0).getAt(0));
+
+                polygons.push(polygon);
+            }
+
+
+            function newCurrent(newCurrent) {
+
+                if(current) {
+                    current.setOptions(defaultPolyOptions);
+                }
+                current = newCurrent;
+                current.setOptions(currentPolyOpts);
+
+            }
+
+
+            google.maps.event.addListener(drawingManager, 'overlaycomplete', function(event) {
+                if (event.type == google.maps.drawing.OverlayType.POLYGON) {
+                    registerPolygon(event.overlay);
+                }
+            });
+
+            google.maps.event.addDomListener(document, 'keyup', function (e) {
+
+                var code = (e.keyCode ? e.keyCode : e.which);
+
+                if(code == 46) {
+                    if(current) {
+                        polygons = polygons.filter(function(next){
+                            return next.id !== current.id;
+                        });
+                        current.setMap(null);
+                    }
+                }
+
+
+                if(code == 67) { //todo: not cross platform
+                    if(current) {
+                        var polygon = new google.maps.Polygon(defaultPolyOptions);
+
+                        var newPaths = [];
+
+                        for (var i = 0; i < current.getPaths().length; i++) {
+                            var newPath = [];
+                            var path = current.getPaths().getAt(i);
+                            for (var j = 0; j < path.length; j++) {
+                                var c = path.getAt(j);
+                                newPath.push({lat: c.lat(), lng: c.lng()});
+                            }
+                            newPaths.push(newPath);
+                        }
+
+                        polygon.setOptions({
+                            paths: newPaths
+                        });
+
+                        registerPolygon(polygon);
+                        newCurrent(polygon);
+                    }
+                }
+
+                if(code==68) {
+                    if(currentPath && currentPointIndex)
+                    {
+                        currentPath.removeAt(currentPointIndex)
+                    }
+                }
+
+                
+            });
+
+
+            
+            window.dump = function(){
+                var polygonsJson = [];
+
+                var result = "[\n";
+
+                for (var i = 0; i < polygons.length; i++) {
+                    var polygon = polygons[i];
+                    result += JSON.stringify(dumpOne(polygon)) + "\n,";
+                    polygonsJson.push(dumpOne(polygon));
+                }
+
+                result = result.substring(0, result.length - 1);
+                result += "]";
+
+
+                document.querySelector("#dump").style.display = "block";
+                document.querySelector("#dump textarea").value = result;
+
+//                return JSON.stringify(polygonsJson);
+            };
+
+            window.dumpCurrent = function(){
+                if(current) {
+                    return JSON.stringify(dumpOne(current));
+                }
+            };
+
+
+
+            function dumpOne(polygon){
+
+                var polygonJson = {};
+
+
+                var pathsJson = [];
+
+                polygonJson.title = polygon.title;
+
+                var paths = polygon.getPaths();
+                for (var n = 0; n < paths.getLength(); n++) {
+                    var pathJson = [];
+                    var path = paths.getAt(n);
+
+                    for (var j = 0; j < path.getLength(); j++) {
+                        var c = path.getAt(j);
+                        pathJson.push([c.lat(), c.lng()])
+
+                    }
+
+                    pathsJson.push(pathJson);
+                }
+
+                if(polygon.center) {
+                    polygonJson.center = [polygon.center.lat(), polygon.center.lng()];
+                }
+
+                polygonJson.paths = pathsJson;
+
+                return polygonJson;
+            };
+
+
+            window.load = function(json) {
+
+
+                json = json.map(function(poly){
+                    poly.paths = poly.paths.map(function(path){
+                        return path.map(function(c){
+                            return new google.maps.LatLng(c[0], c[1])
+                        })
+                    })
+
+                    poly.center = new google.maps.LatLng(poly.center[0],poly.center[1]);
+
+                    return poly;
+                });
+
+                for (var i = 0; i < json.length; i++) {
+                    var polygonJson = json[i];
+
+                    var polygon = new google.maps.Polygon(defaultPolyOptions);
+                    polygon.setOptions({
+                        paths: polygonJson.paths
+                    });
+                    if(polygonJson.title) polygon.title = polygonJson.title;
+
+                    polygon.center = polygonJson.center;
+
+                    registerPolygon(polygon);
+
+                }
+
+
+            };
+
+            showLabel = function(title, center, color) {
+                var options = {
+                    content: title
+                    , boxStyle: {
+                        border: "0px solid black"
+                        , color: color || "black"
+                        , textAlign: "center"
+                        , fontSize: "8pt"
+                        , width: "50px"
+                    }
+                    , disableAutoPan: true
+                    , maxWidth: "50px"
+                    , closeBoxURL: ""
+                    , isHidden: false
+                    , pane: "mapPane"
+                    , enableEventPropagation: true
+                    , position: center
+                };
+
+                var ib = new InfoBox(options);
+                ib.open(map);
+            };
+
+            title = function(title) {
+                if(current) {
+                    current.title = title;
+                    showLabel(title, current.getPaths().getAt(0).getAt(0))
+                }
+            };
+
+
+            ajax({url:"regions.json"}).then(function(regions){
+                load(regions);
+            }).catch(function(e){
+                throw e;
+            });
+
+
+        }
+
+
+
+
+        google.maps.event.addDomListener(window, 'load', initialize);
+
+    </script>
+</head>
+<body>
+<div id="map-canvas"></div>
+
+
+<div style="display: none; position: fixed; top: 20px; right: 20px; width: 200px; height: 200px;" id="dump"><textarea style="width: 100%; height: 100%;" id="dump_textarea"></textarea></div>
+
+</body>
+</html>
