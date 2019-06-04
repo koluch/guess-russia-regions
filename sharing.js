@@ -22,25 +22,9 @@ sharing = new function(){
 
     this.init = function(parent){
 
-         this.parent = parent;
+        this.parent = parent;
 
-
-        // twitter loading
-        !function (d, s, id) {
-            var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
-            if (!d.getElementById(id)) {
-                js = d.createElement(s);
-                js.id = id;
-                js.src = p + '://platform.twitter.com/widgets.js';
-                fjs.parentNode.insertBefore(js, fjs);
-            }
-        }(document, 'script', 'twitter-wjs');
         parent.innerHTML = '<div class="widget" id="twitter_button_holder"></div>';
-
-
-
-
-
         parent.innerHTML += '<div class="widget" id="fb_button_holder">'
             + '<div id="fb_share" style=""><button title="Поделиться" ><span/></button><span>Поделиться</span></div>'
             + '<div id="fb-root"></div>'
