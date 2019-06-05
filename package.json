@@ -1,0 +1,29 @@
+{
+  "name": "guess-russia-regions",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "parcel index.html",
+    "build": "parcel build index.html",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/koluch/guess-russia-regions.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/koluch/guess-russia-regions/issues"
+  },
+  "homepage": "https://github.com/koluch/guess-russia-regions#readme",
+  "devDependencies": {
+    "less": "^3.9.0",
+    "parcel-bundler": "^1.12.3",
+    "prettier": "^1.17.1"
+  },
+  "dependencies": {
+    "set-state-store": "^0.1.1"
+  }
+}

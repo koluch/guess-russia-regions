@@ -1,0 +1,35 @@
+.land {
+  fill: #CCCCCC;
+  fill-opacity: 1;
+  stroke:white;
+  stroke-opacity: 1;
+  stroke-width:0.5;
+  cursor: pointer;
+
+  &:hover {
+    fill: rgba(72, 76, 72, 0.65);
+  }
+}
+
+.svg-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #f3f3f3;
+  cursor: default;
+
+  &.isDragging {
+    &, .land {
+      cursor: grabbing;
+    }
+  }
+}
+
+svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: top left;
+}
