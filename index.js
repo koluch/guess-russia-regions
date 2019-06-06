@@ -1,22 +1,48 @@
 import { createStore } from 'set-state-store';
+import {REGIONS, REGION_CODES} from "./regions.js"
+
+const STATE = {
+  INIT: "INIT",
+  PLAYING: "INIT",
+  GAME_OVER: "INIT",
+};
+
+const LEVEL_SIZE = 10;
+const MAX_MISTAKES = 3;
+
+function updateStats(currentRegion, mistakes) {
+  document.querySelector('#stats .level span').textContent = `${1 + Math.ceil(currentRegion / LEVEL_SIZE)}/${Math.ceil(REGION_CODES.length / LEVEL_SIZE)}`
+  document.querySelector('#stats .mistakes span').textContent = `${mistakes}/${MAX_MISTAKES}`;
+}
 
 document.addEventListener("DOMContentLoaded", () => {
   const svgContainerEl = document.getElementById("svg-container");
   const svgEl = document.getElementById("svg");
 
-  // Drag logic
+
+  // Create state store and define update logic
   const store = createStore({
+    state: STATE.INIT,
     isDragging: false,
     start: [0, 0],
     offset: [0, 0],
     zoom: 1,
+    currentRegion: 0,
+    mistakes: 0,
   });
-  store.subscribe((state) => {
-    const {isDragging, offset, zoom } = state;
+  let update = (state, oldState) => {
+    const {isDragging, offset, zoom, currentRegion, mistakes } = state;
     svgContainerEl.classList.toggle('isDragging', isDragging);
     svgEl.style.transform = `translateX(${offset[0]}px) translateY(${offset[1]}px) scale(${zoom})`;
-  });
 
+    if (currentRegion !== oldState.currentRegion || mistakes !== oldState.mistakes) {
+      updateStats(currentRegion, mistakes)
+    }
+  };
+  store.subscribe(update);
+  updateStats(store.getState().currentRegion, store.getState().mistakes);
+
+  // Drag logic
   let handleStart = ([x, y]) => {
     store.setState({
       isDragging: true,
@@ -50,7 +76,6 @@ document.addEventListener("DOMContentLoaded", () => {
   svgContainerEl.addEventListener("mousemove", (e) => handleMove([e.clientX, e.clientY]));
   svgContainerEl.addEventListener("mouseleave", handleStop);
   svgContainerEl.addEventListener("wheel", (e) => handleZoom(e.deltaY));
-
   svgContainerEl.addEventListener("touchstart", (e) => {
     if (e.touches.length > 0) {
       let firstTouch = e.touches.item(0);
