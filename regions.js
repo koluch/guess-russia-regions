@@ -1,336 +1,343 @@
-export const REGIONS = {
-  "RU-AD": {
-    "titleRu": "Республика Адыгея",
-    "titleEn": "Adygey"
-  },
-  "RU-ALT": {
-    "titleRu": "Алтайский край",
-    "titleEn": "Altay"
-  },
-  "RU-AMU": {
-    "titleRu": "Амурская область",
-    "titleEn": "Amur"
-  },
-  "RU-ARK": {
-    "titleRu": "Архангельская область",
-    "titleEn": "Arkhangel'sk"
-  },
-  "RU-AST": {
-    "titleRu": "Астраханская область",
-    "titleEn": "Astrakhan'"
-  },
-  "RU-BA": {
-    "titleRu": "Республика Башкортостан",
-    "titleEn": "Bashkortostan"
-  },
-  "RU-BEL": {
-    "titleRu": "Белгородская область",
-    "titleEn": "Belgorod"
-  },
-  "RU-BRY": {
-    "titleRu": "Брянская область",
-    "titleEn": "Bryansk"
-  },
-  "RU-BU": {
-    "titleRu": "Республика Бурятия",
-    "titleEn": "Buryat"
-  },
-  "RU-CE": {
-    "titleRu": "Чеченская республика",
-    "titleEn": "Chechnya"
-  },
-  "RU-CHE": {
-    "titleRu": "Челябинская область",
-    "titleEn": "Chelyabinsk"
-  },
-  "RU-CHU": {
-    "titleRu": "Чукотский автономный округ",
-    "titleEn": "Chukot"
-  },
-  "RU-CU": {
-    "titleRu": "Чувашская республика",
-    "titleEn": "Chuvash"
-  },
-  "RU-DA": {
-    "titleRu": "Республика Дагестан",
-    "titleEn": "Dagestan"
-  },
-  "RU-AL": {
-    "titleRu": "Республика Алтай",
-    "titleEn": "Gorno-Altay"
-  },
-  "RU-IN": {
-    "titleRu": "Республика Ингушетия",
-    "titleEn": "Ingush"
-  },
-  "RU-IRK": {
-    "titleRu": "Иркутская область",
-    "titleEn": "Irkutsk"
-  },
-  "RU-IVA": {
-    "titleRu": "Ивановская область",
-    "titleEn": "Ivanovo"
-  },
-  "RU-KB": {
-    "titleRu": "Кабардино-Балкарская республика",
-    "titleEn": "Kabardin-Balkar"
-  },
-  "RU-KC": {
-    "titleRu": "Карачаево-Черкесская республика",
-    "titleEn": "Karachay-Cherkess"
-  },
-  "RU-KDA": {
-    "titleRu": "Краснодарский край",
-    "titleEn": "Krasnodar"
-  },
-  "RU-KEM": {
-    "titleRu": "Кемеровская область",
-    "titleEn": "Kemerovo"
-  },
-  "RU-KLU": {
-    "titleRu": "Калужская область",
-    "titleEn": "Kaluga"
-  },
-  "RU-KHA": {
-    "titleRu": "Хабаровский край",
-    "titleEn": "Khabarovsk"
-  },
-  "RU-KR": {
-    "titleRu": "Республика Карелия",
-    "titleEn": "Karelia"
-  },
-  "RU-KK": {
-    "titleRu": "Республика Хакасия",
-    "titleEn": "Khakass"
+export const REGIONS = [
+  {
+    "title": "Московская область",
+    "code": "RU-MOS"
+  },
+  {
+    "title": "Мурманская область",
+    "code": "RU-MUR"
+  },
+  {
+    "title": "Тульская область",
+    "code": "RU-TUL"
+  },
+  {
+    "title": "Омская область",
+    "code": "RU-OMS"
+  },
+  {
+    "title": "Ростовская область",
+    "code": "RU-ROS"
+  },
+  {
+    "title": "Архангельская область",
+    "code": "RU-ARK"
+  },
+  {
+    "title": "Ямало-Ненецкий автономный округ",
+    "code": "RU-YAN"
+  },
+  {
+    "title": "Еврейская автономная область",
+    "code": "RU-YEV"
+  },
+  {
+    "title": "Москва",
+    "code": "RU-MOW"
+  },
+  {
+    "title": "Ульяновская область",
+    "code": "RU-ULY"
+  },
+  {
+    "title": "Санкт-Петербург",
+    "code": "RU-SPE"
+  },
+  {
+    "title": "Калининградская область",
+    "code": "RU-KGD"
+  },
+  {
+    "title": "Ленинградская область",
+    "code": "RU-LEN"
+  },
+  {
+    "title": "Кемеровская область",
+    "code": "RU-KEM"
+  },
+  {
+    "title": "Республика Марий Эл",
+    "code": "RU-ME"
+  },
+  {
+    "title": "Костромская область",
+    "code": "RU-KOS"
+  },
+  {
+    "title": "Чувашская республика",
+    "code": "RU-CU"
+  },
+  {
+    "title": "Липецкая область",
+    "code": "RU-LIP"
+  },
+  {
+    "title": "Волгоградская область",
+    "code": "RU-VGG"
+  },
+  {
+    "title": "Амурская область",
+    "code": "RU-AMU"
+  },
+  {
+    "title": "Забайкальский край",
+    "code": "RU-ZAB"
+  },
+  {
+    "title": "Нижегородская область",
+    "code": "RU-NIZ"
+  },
+  {
+    "title": "Воронежская область",
+    "code": "RU-VOR"
+  },
+  {
+    "title": "Магаданская область",
+    "code": "RU-MAG"
+  },
+  {
+    "title": "Республика Алтай",
+    "code": "RU-AL"
+  },
+  {
+    "title": "Курская область",
+    "code": "RU-KRS"
   },
-  "RU-KL": {
-    "titleRu": "Республика Калмыкия",
-    "titleEn": "Kalmyk"
+  {
+    "title": "Рязанская область",
+    "code": "RU-RYA"
   },
-  "RU-KHM": {
-    "titleRu": "Ханты-Мансийский автономный округ - Югра",
-    "titleEn": "Khanty-Mansiy"
+  {
+    "title": "Тюменская область",
+    "code": "RU-TYU"
   },
-  "RU-KGD": {
-    "titleRu": "Калининградская область",
-    "titleEn": "Kaliningrad"
+  {
+    "title": "Красноярский край",
+    "code": "RU-KYA"
   },
-  "RU-KO": {
-    "titleRu": "Республика Коми",
-    "titleEn": "Komi"
+  {
+    "title": "Республика Саха (Якутия)",
+    "code": "RU-SA"
   },
-  "RU-KAM": {
-    "titleRu": "Камчатский край",
-    "titleEn": "Kamchatka"
+  {
+    "title": "Псковская область",
+    "code": "RU-PSK"
   },
-  "RU-KRS": {
-    "titleRu": "Курская область",
-    "titleEn": "Kursk"
+  {
+    "title": "Ненецкий автономный округ",
+    "code": "RU-NEN"
   },
-  "RU-KOS": {
-    "titleRu": "Костромская область",
-    "titleEn": "Kostroma"
+  {
+    "title": "Оренбургская область",
+    "code": "RU-ORE"
   },
-  "RU-KGN": {
-    "titleRu": "Курганская область",
-    "titleEn": "Kurgan"
+  {
+    "title": "Тверская область",
+    "code": "RU-TVE"
   },
-  "RU-KIR": {
-    "titleRu": "Кировская область",
-    "titleEn": "Kirov"
+  {
+    "title": "Свердловская область",
+    "code": "RU-SVE"
   },
-  "RU-KYA": {
-    "titleRu": "Красноярский край",
-    "titleEn": "Krasnoyarsk"
+  {
+    "title": "Сахалинская область",
+    "code": "RU-SAK"
   },
-  "RU-LEN": {
-    "titleRu": "Ленинградская область",
-    "titleEn": "Leningrad"
+  {
+    "title": "Челябинская область",
+    "code": "RU-CHE"
   },
-  "RU-LIP": {
-    "titleRu": "Липецкая область",
-    "titleEn": "Lipetsk"
+  {
+    "title": "Самарская область",
+    "code": "RU-SAM"
   },
-  "RU-MOW": {
-    "titleRu": "Москва",
-    "titleEn": "Moscow City"
+  {
+    "title": "Смоленская область",
+    "code": "RU-SMO"
   },
-  "RU-ME": {
-    "titleRu": "Республика Марий Эл",
-    "titleEn": "Mariy-El"
+  {
+    "title": "Ставропольский край",
+    "code": "RU-STA"
   },
-  "RU-MAG": {
-    "titleRu": "Магаданская область",
-    "titleEn": "Magadan"
+  {
+    "title": "Пермский край",
+    "code": "RU-PER"
   },
-  "RU-MUR": {
-    "titleRu": "Мурманская область",
-    "titleEn": "Murmansk"
+  {
+    "title": "Тамбовская область",
+    "code": "RU-TAM"
   },
-  "RU-MO": {
-    "titleRu": "Республика Мордовия",
-    "titleEn": "Mordovia"
+  {
+    "title": "Республика Коми",
+    "code": "RU-KO"
   },
-  "RU-MOS": {
-    "titleRu": "Московская область",
-    "titleEn": "Moskva"
+  {
+    "title": "Чукотский автономный округ",
+    "code": "RU-CHU"
   },
-  "RU-NGR": {
-    "titleRu": "Новгородская область",
-    "titleEn": "Novgorod"
+  {
+    "title": "Кабардино-Балкарская республика",
+    "code": "RU-KB"
   },
-  "RU-NEN": {
-    "titleRu": "Ненецкий автономный округ",
-    "titleEn": "Nenets"
+  {
+    "title": "Чеченская республика",
+    "code": "RU-CE"
   },
-  "RU-SE": {
-    "titleRu": "Республика Северная Осетия — Алания",
-    "titleEn": "North Ossetia"
+  {
+    "title": "Приморский край",
+    "code": "RU-PRI"
   },
-  "RU-NVS": {
-    "titleRu": "Новосибирская область",
-    "titleEn": "Novosibirsk"
+  {
+    "title": "Камчатский край",
+    "code": "RU-KAM"
   },
-  "RU-NIZ": {
-    "titleRu": "Нижегородская область",
-    "titleEn": "Nizhegorod"
+  {
+    "title": "Республика Мордовия",
+    "code": "RU-MO"
   },
-  "RU-ORE": {
-    "titleRu": "Оренбургская область",
-    "titleEn": "Orenburg"
+  {
+    "title": "Курганская область",
+    "code": "RU-KGN"
   },
-  "RU-ORL": {
-    "titleRu": "Орловская область",
-    "titleEn": "Orel"
+  {
+    "title": "Республика Бурятия",
+    "code": "RU-BU"
   },
-  "RU-OMS": {
-    "titleRu": "Омская область",
-    "titleEn": "Omsk"
+  {
+    "title": "Алтайский край",
+    "code": "RU-ALT"
   },
-  "RU-PER": {
-    "titleRu": "Пермский край",
-    "titleEn": "Perm'"
+  {
+    "title": "Республика Хакасия",
+    "code": "RU-KK"
   },
-  "RU-PRI": {
-    "titleRu": "Приморский край",
-    "titleEn": "Primor'ye"
+  {
+    "title": "Республика Башкортостан",
+    "code": "RU-BA"
   },
-  "RU-PSK": {
-    "titleRu": "Псковская область",
-    "titleEn": "Pskov"
+  {
+    "title": "Саратовская область",
+    "code": "RU-SAR"
   },
-  "RU-PNZ": {
-    "titleRu": "Пензенская область",
-    "titleEn": "Penza"
+  {
+    "title": "Калужская область",
+    "code": "RU-KLU"
   },
-  "RU-ROS": {
-    "titleRu": "Ростовская область",
-    "titleEn": "Rostov"
+  {
+    "title": "Удмуртская республика",
+    "code": "RU-UD"
   },
-  "RU-RYA": {
-    "titleRu": "Рязанская область",
-    "titleEn": "Ryazan'"
+  {
+    "title": "Вологодская область",
+    "code": "RU-VLG"
   },
-  "RU-SAM": {
-    "titleRu": "Самарская область",
-    "titleEn": "Samara"
+  {
+    "title": "Республика Татарстан",
+    "code": "RU-TA"
   },
-  "RU-SA": {
-    "titleRu": "Республика Саха (Якутия) ",
-    "titleEn": "Sakha"
+  {
+    "title": "Новосибирская область",
+    "code": "RU-NVS"
   },
-  "RU-SAK": {
-    "titleRu": "Сахалинская область",
-    "titleEn": "Sakhalin"
+  {
+    "title": "Орловская область",
+    "code": "RU-ORL"
   },
-  "RU-SMO": {
-    "titleRu": "Смоленская область",
-    "titleEn": "Smolensk"
+  {
+    "title": "Астраханская область",
+    "code": "RU-AST"
   },
-  "RU-SPE": {
-    "titleRu": "Санкт-Петербург",
-    "titleEn": "Saint Petersburg City"
+  {
+    "title": "Брянская область",
+    "code": "RU-BRY"
   },
-  "RU-SAR": {
-    "titleRu": "Саратовская область",
-    "titleEn": "Saratov"
+  {
+    "title": "Республика Карелия",
+    "code": "RU-KR"
   },
-  "RU-STA": {
-    "titleRu": "Ставропольский край",
-    "titleEn": "Stavropol'"
+  {
+    "title": "Краснодарский край",
+    "code": "RU-KDA"
   },
-  "RU-SVE": {
-    "titleRu": "Свердловская область",
-    "titleEn": "Sverdlovsk"
+  {
+    "title": "Республика Тыва",
+    "code": "RU-TY"
   },
-  "RU-TAM": {
-    "titleRu": "Тамбовская область",
-    "titleEn": "Tambov"
+  {
+    "title": "Ханты-Мансийский автономный округ - Югра",
+    "code": "RU-KHM"
   },
-  "RU-TOM": {
-    "titleRu": "Томская область",
-    "titleEn": "Tomsk"
+  {
+    "title": "Иркутская область",
+    "code": "RU-IRK"
   },
-  "RU-TUL": {
-    "titleRu": "Тульская область",
-    "titleEn": "Tula"
+  {
+    "title": "Республика Ингушетия",
+    "code": "RU-IN"
   },
-  "RU-TA": {
-    "titleRu": "Республика Татарстан",
-    "titleEn": "Tatarstan"
+  {
+    "title": "Республика Калмыкия",
+    "code": "RU-KL"
   },
-  "RU-TY": {
-    "titleRu": "Республика Тыва",
-    "titleEn": "Tuva"
+  {
+    "title": "Белгородская область",
+    "code": "RU-BEL"
   },
-  "RU-TVE": {
-    "titleRu": "Тверская область",
-    "titleEn": "Tver'"
+  {
+    "title": "Владимирская область",
+    "code": "RU-VLA"
   },
-  "RU-TYU": {
-    "titleRu": "Тюменская область",
-    "titleEn": "Tyumen'"
+  {
+    "title": "Новгородская область",
+    "code": "RU-NGR"
   },
-  "RU-UD": {
-    "titleRu": "Удмуртская республика",
-    "titleEn": "Udmurt"
+  {
+    "title": "Ярославская область",
+    "code": "RU-YAR"
   },
-  "RU-ULY": {
-    "titleRu": "Ульяновская область",
-    "titleEn": "Ul'yanovsk"
+  {
+    "title": "Республика Адыгея",
+    "code": "RU-AD"
   },
-  "RU-VGG": {
-    "titleRu": "Волгоградская область",
-    "titleEn": "Volgograd"
+  {
+    "title": "Республика Дагестан",
+    "code": "RU-DA"
   },
-  "RU-VLA": {
-    "titleRu": "Владимирская область",
-    "titleEn": "Vladimir"
+  {
+    "title": "Пензенская область",
+    "code": "RU-PNZ"
   },
-  "RU-YAN": {
-    "titleRu": "Ямало-Ненецкий автономный округ",
-    "titleEn": "Yamal-Nenets"
+  {
+    "title": "Хабаровский край",
+    "code": "RU-KHA"
   },
-  "RU-VLG": {
-    "titleRu": "Вологодская область",
-    "titleEn": "Vologda"
+  {
+    "title": "Карачаево-Черкесская республика",
+    "code": "RU-KC"
   },
-  "RU-VOR": {
-    "titleRu": "Воронежская область",
-    "titleEn": "Voronezh"
+  {
+    "title": "Республика Северная Осетия — Алания",
+    "code": "RU-SE"
   },
-  "RU-YAR": {
-    "titleRu": "Ярославская область",
-    "titleEn": "Yaroslavl'"
+  {
+    "title": "Ивановская область",
+    "code": "RU-IVA"
   },
-  "RU-YEV": {
-    "titleRu": "Еврейская автономная область",
-    "titleEn": "Yevrey"
+  {
+    "title": "Томская область",
+    "code": "RU-TOM"
   },
-  "RU-ZAB": {
-    "titleRu": "Забайкальский край",
-    "titleEn": "Zabaykal'ye"
+  {
+    "title": "Кировская область",
+    "code": "RU-KIR"
   }
-};
+];
 
-export const REGION_CODES = Object.keys(REGIONS);
+// export const REGION_TITLES = (() => {
+//   const result = {};
+//   for (const [code, title] of REGIONS) {
+//     result[code] = title;
+//   }
+//   return result;
+// })();
+export const REGION_CODES = REGIONS.map(({ code }) => code);

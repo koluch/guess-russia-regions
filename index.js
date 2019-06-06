@@ -28,8 +28,8 @@ function updateGameState(state) {
 
   if (gameState === STATE.PLAYING) {
     const currentRegionCode = regionCodes[currentRegionIndex];
-    const currentRegion = REGIONS[currentRegionCode];
-    document.getElementById('currentRegion').textContent = currentRegion.titleRu;
+    const currentRegion = REGIONS.find(({ code }) => code === currentRegionCode);
+    document.getElementById('currentRegion').textContent = currentRegion.title;
   }
 }
 
@@ -42,7 +42,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const store = createStore({
     gameState: STATE.INIT,
     isDragging: false,
-    start: [0, 0],
+    isDraggingActuallyStarted: false, // need to make sure that user actually dragged the map, to prevent click handling on regions after dragging
+    lastPoint: [0, 0],
     offset: [0, 0],
     zoom: 1,
     regionCodes: [],
@@ -65,11 +66,17 @@ document.addEventListener("DOMContentLoaded", () => {
   let handleStart = ([x, y]) => {
     store.setState({
       isDragging: true,
+      isDraggingActuallyStarted: false,
       start: [x, y],
+      lastPoint: [x, y],
     });
   };
   let handleStop = () => {
-    console.log("handleStop!")
+    let { start, lastPoint } = store.getState();
+    // Determine if user just clicked and dispatch custom click event
+    if (Math.abs(start[0] - lastPoint[0]) < 3 && Math.abs(start[1] - lastPoint[1]) < 3) {
+      svgContainerEl.dispatchEvent(new CustomEvent("custom-click"))
+    }
     store.setState({
       isDragging: false,
     });
@@ -77,11 +84,12 @@ document.addEventListener("DOMContentLoaded", () => {
   let handleMove = ([x, y]) => {
     let state = store.getState();
     if (state.isDragging) {
-      let diffX = x - state.start[0];
-      let diffY = y - state.start[1];
+      let diffX = x - state.lastPoint[0];
+      let diffY = y - state.lastPoint[1];
       store.setState({
         offset: [state.offset[0] + diffX, state.offset[1] + diffY],
-        start: [x, y],
+        lastPoint: [x, y],
+        isDraggingActuallyStarted: true,
       });
     }
   };
@@ -145,7 +153,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Region click behaviour
   document.getElementById('regions').addEventListener('click', (e) => {
-    console.log("click!", store.getState().isDragging)
+    if (store.getState().isDraggingActuallyStarted) {
+      return;
+    }
+
     const regionPathEl = e.target;
     if (!regionPathEl.classList.contains("land")) {
       return;
