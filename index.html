@@ -10,6 +10,27 @@
     </style>
 </head>
 <body>
+<form id="start-modal" class="modal">
+    <div>
+        <h1>Привет!</h1>
+        <button type="submit">Старт!</button>
+    </div>
+</form>
+<form id="end-modal" class="modal">
+    <div>
+        <h1>Конец!</h1>
+        <button type="submit">Еще раз!</button>
+    </div>
+</form>
+<div id="currentRegion">
+    Удмуртия
+</div>
+<div class="tryMessage success">
+    Правильно!
+</div>
+<div class="tryMessage failed">
+    Не правильно!
+</div>
 <div id="stats">
     <div class="level">Level: <span></span></div>
     <div class="mistakes">Mistakes: <span></span></div>
@@ -31,7 +52,7 @@
             <!-- {id:"RU-AD"},{id:"RU-ALT"},{id:"RU-AMU"},{id:"RU-ARK"},{id:"RU-AST"},{id:"RU-BA"},{id:"RU-BEL"},{id:"RU-BRY"},{id:"RU-BU"},{id:"RU-CE"},{id:"RU-CHE"},{id:"RU-CHU"},{id:"RU-CU"},{id:"RU-DA"},{id:"RU-AL"},{id:"RU-IN"},{id:"RU-IRK"},{id:"RU-IVA"},{id:"RU-KB"},{id:"RU-KC"},{id:"RU-KDA"},{id:"RU-KEM"},{id:"RU-KLU"},{id:"RU-KHA"},{id:"RU-KR"},{id:"RU-KK"},{id:"RU-KL"},{id:"RU-KHM"},{id:"RU-KGD"},{id:"RU-KO"},{id:"RU-KAM"},{id:"RU-KRS"},{id:"RU-KOS"},{id:"RU-KGN"},{id:"RU-KIR"},{id:"RU-KYA"},{id:"RU-LEN"},{id:"RU-LIP"},{id:"RU-MOW"},{id:"RU-ME"},{id:"RU-MAG"},{id:"RU-MUR"},{id:"RU-MO"},{id:"RU-MOS"},{id:"RU-NGR"},{id:"RU-NEN"},{id:"RU-SE"},{id:"RU-NVS"},{id:"RU-NIZ"},{id:"RU-ORE"},{id:"RU-ORL"},{id:"RU-OMS"},{id:"RU-PER"},{id:"RU-PRI"},{id:"RU-PSK"},{id:"RU-PNZ"},{id:"RU-ROS"},{id:"RU-RYA"},{id:"RU-SAM"},{id:"RU-SA"},{id:"RU-SAK"},{id:"RU-SMO"},{id:"RU-SPE"},{id:"RU-SAR"},{id:"RU-STA"},{id:"RU-SVE"},{id:"RU-TAM"},{id:"RU-TOM"},{id:"RU-TUL"},{id:"RU-TA"},{id:"RU-TY"},{id:"RU-TVE"},{id:"RU-TYU"},{id:"RU-UD"},{id:"RU-ULY"},{id:"RU-VGG"},{id:"RU-VLA"},{id:"RU-YAN"},{id:"RU-VLG"},{id:"RU-VOR"},{id:"RU-YAR"},{id:"RU-YEV"},{id:"RU-ZAB"}-->
 
         </defs>
-        <g>
+        <g id="regions">
             <path id="RU-AD" title="Adygey" class="land"
                   d="M144.58,762.42L145.59,763.82L146.66,763.23L146.62,761.98L146.18,761.99L145.84,761.36L145.34,761.38L144.97,761L145.23,760.2L144.83,758.88L145.4,758.34L145.38,757.6L146.32,756.98L145.65,756.5L146.02,756.11L145.86,755.55L145.24,755.34L145.47,754.77L144.26,754.69L143.61,754.12L142.97,756.11L141.81,756.48L139.92,756.09L138.81,756.21L137.44,755.64L136.78,754.94L135.94,754.8L135.72,754.36L136.16,753.79L136.65,754.22L137.45,754.08L138.48,754.72L140.13,754.62L142.15,753.71L143.23,752.85L144.41,753.05L145.07,753.66L146.18,754.06L146.99,753.66L148.13,753.73L149.57,754.93L151.82,759.98L151.17,760.23L150.25,757.69L149.76,757.23L149.06,757.3L148.53,758.84L149.56,761.13L148.96,762.84L149.43,764.68L149.05,765.94L148.05,766.79L145.53,765.24L144.05,765.34L143.45,764.82L144.12,764.51L143.95,763.97L144.49,763.73L143.91,762.72L143.91,762.72z"/>
             <path id="RU-ALT" title="Altay" class="land"

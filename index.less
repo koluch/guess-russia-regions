@@ -1,3 +1,7 @@
+@import "./reset";
+
+@default-border-radius: 4px;
+
 .land {
   fill: #CCCCCC;
   fill-opacity: 1;
@@ -8,6 +12,14 @@
 
   &:hover {
     fill: rgba(72, 76, 72, 0.65);
+  }
+
+  &.success {
+    fill: #8cb98c;
+  }
+
+  &.failed {
+    fill: #b97669;
   }
 }
 
@@ -41,6 +53,104 @@ svg {
   background: #000000db;
   z-index: 2;
   color: white;
-  border-radius: 10px;
+  border-radius: @default-border-radius;
   padding: 10px;
+}
+
+.hidden {
+  display: none;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+
+  &::before {
+    content: ' ';
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    background: #000000db;
+  }
+
+  > div {
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.76);
+    z-index: 2;
+    border-radius: @default-border-radius;
+  }
+}
+
+#currentRegion {
+  position: fixed;
+  z-index: 3;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #000000db;
+  color: white;
+  border-radius: @default-border-radius;
+  padding: 10px;
+  display: none;
+}
+
+.tryMessage {
+  position: fixed;
+  z-index: 3;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  color: white;
+  border-radius: @default-border-radius;
+  padding: 10px;
+  display: none;
+
+  &.success {
+    background: #1eb41e;
+  }
+
+  &.failed {
+    background: #b45540;
+  }
+}
+
+body.INIT #start-modal {
+  display: flex;
+}
+
+body.GAME_OVER #end-modal {
+  display: flex;
+}
+
+body.PLAYING #currentRegion {
+  display: block;
+}
+
+body.TRY_SUCCESS .tryMessage.success {
+  display: block;
+}
+
+body.TRY_SUCCESS .tryMessage.success {
+  display: block;
+}
+
+body.TRY_FAILED .tryMessage.failed {
+  display: block;
+}
+
+body:not(.PLAYING) {
+  .svg-container {
+    pointer-events: none;
+  }
 }
