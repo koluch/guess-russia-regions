@@ -1,6 +1,6 @@
 import { createStore } from "set-state-store";
 import { REGIONS, REGION_CODES } from "./regions.js";
-import { shuffleArray } from "./utils.js";
+import { pluralize, shuffleArray } from "./utils.js";
 
 const STATE = {
   INIT: "INIT",
@@ -16,12 +16,12 @@ const MAX_MISTAKES = 3;
 function updateStats(state) {
   const { currentRegionIndex, mistakes, gameState} = state;
   document.querySelector('#stats').classList.toggle('hidden', gameState !== STATE.PLAYING);
-  document.querySelector('#stats .level span').textContent = `${1 + Math.ceil(currentRegionIndex / LEVEL_SIZE)}/${Math.ceil(REGION_CODES.length / LEVEL_SIZE)}`
+  document.querySelector('#stats .level span').textContent = `${Math.ceil((1 + currentRegionIndex) / LEVEL_SIZE)}/${Math.ceil(REGION_CODES.length / LEVEL_SIZE)}`
   document.querySelector('#stats .mistakes span').textContent = `${mistakes}/${MAX_MISTAKES}`;
 }
 
 function updateGameState(state) {
-  const { gameState, regionCodes, currentRegionIndex } = state;
+  const { gameState, regionCodes, currentRegionIndex, guessed } = state;
   Object.entries(STATE).forEach(([key, value]) => {
     window.document.body.classList.toggle(key, gameState === value);
   });
@@ -30,6 +30,34 @@ function updateGameState(state) {
     const currentRegionCode = regionCodes[currentRegionIndex];
     const currentRegion = REGIONS.find(({ code }) => code === currentRegionCode);
     document.getElementById('currentRegion').textContent = currentRegion.title;
+  }
+
+  if (gameState === STATE.GAME_OVER) {
+    let msg;
+    let header;
+    if(guessed == 0) {
+      msg = "Вы не отгадали ни одного региона!";
+      header = "Слабовато!";
+    }
+    else if(guessed < 20) {
+      msg = "Вы отгадали только <b>" + pluralize(guessed, "регион") + "</b>";
+      header = "Слабовато!";
+    }
+    else if(guessed >= 20 && guessed < 50) {
+      msg = "Вы отгадали только <b>" + pluralize(guessed, "регион") + "</b>";
+      header = "Неплохо, но можно и лучше...";
+    }
+    else if(guessed >= 50 && guessed < REGIONS.length){
+      msg = "Вы отгадали <b>" + pluralize(guessed, "регион") + "</b>. Попробуйте еще раз, возможно получится отгадать все?";
+      header = "Здорово!";
+    }
+    else {
+      msg = "Вы отгадали все регионы! Поздравляем, вы настоящий патриот!";
+      header = "Невероятно!";
+    }
+
+    document.querySelector("#end-modal h1").innerHTML = header;
+    document.querySelector("#end-modal h2").innerHTML = msg;
   }
 }
 
@@ -48,6 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
     zoom: 1,
     regionCodes: [],
     currentRegionIndex: 0,
+    guessed: 0,
     mistakes: 0,
   });
   let update = (state, oldState) => {
@@ -140,8 +169,9 @@ document.addEventListener("DOMContentLoaded", () => {
         regionCodes: regionCodes,
         gameState: STATE.PLAYING,
         currentRegionIndex: 0,
+        guessed: 0,
         mistakes: 0,
-      })
+      });
 
       // Reset painted regions
       document.querySelectorAll('.land').forEach((x) => {
@@ -149,11 +179,13 @@ document.addEventListener("DOMContentLoaded", () => {
         x.classList.remove('failed')
       })
     });
-  })
+  });
 
   // Region click behaviour
   document.getElementById('regions').addEventListener('click', (e) => {
-    if (store.getState().isDraggingActuallyStarted) {
+    let state = store.getState();
+
+    if (state.isDraggingActuallyStarted) {
       return;
     }
 
@@ -162,26 +194,30 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
     const regionCode = regionPathEl.id;
-    const currentRegionIndex = store.getState().currentRegionIndex;
-    const currentRegionCode = store.getState().regionCodes[currentRegionIndex];
+    const currentRegionIndex = state.currentRegionIndex;
+    const currentRegionCode = state.regionCodes[currentRegionIndex];
     const isSuccess = regionCode === currentRegionCode;
-    let newMistakes = store.getState().mistakes + (isSuccess ? 0 : 1);
+    let newMistakes = state.mistakes + (isSuccess ? 0 : 1);
 
     document.getElementById(currentRegionCode).classList.add(isSuccess ? 'success' : 'failed')
 
     store.setState({
       gameState: isSuccess ? STATE.TRY_SUCCESS : STATE.TRY_FAILED,
+      guessed: state.guessed + (isSuccess ? 1 : 0),
       mistakes: newMistakes,
     });
     setTimeout(() => {
-      if (newMistakes === MAX_MISTAKES) {
+      if (newMistakes > MAX_MISTAKES) {
         store.setState({
           gameState: STATE.GAME_OVER,
         });
       } else {
+        const state = store.getState();
+        const newRegionIndex = state.currentRegionIndex + 1;
         store.setState({
           gameState: STATE.PLAYING,
-          currentRegionIndex: store.getState().currentRegionIndex + 1,
+          currentRegionIndex: newRegionIndex,
+          mistakes: newRegionIndex % LEVEL_SIZE === 0 ? 0 : state.mistakes,
         });
       }
     }, 1000);
