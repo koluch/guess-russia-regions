@@ -1,6 +1,7 @@
 import { createStore } from "set-state-store";
 import { REGIONS, REGION_CODES } from "./regions.js";
 import { pluralize, shuffleArray } from "./utils.js";
+import social from "./social.js";
 
 const STATE = {
   INIT: "INIT",
@@ -65,10 +66,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const svgContainerEl = document.getElementById("svg-container");
   const svgEl = document.getElementById("svg");
 
-
   // Create state store and define update logic
   const store = createStore({
-    gameState: STATE.INIT,
+    gameState: STATE.GAME_OVER,
     isDragging: false,
     isDraggingActuallyStarted: false, // need to make sure that user actually dragged the map, to prevent click handling on regions after dragging
     lastPoint: [0, 0],
@@ -222,5 +222,9 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
     }, 1000);
-  })
+  });
+
+  // Init social buttons
+  const socialObject = social(document.getElementById('social'));
+  window.socialObject = socialObject;
 });
