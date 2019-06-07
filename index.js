@@ -106,11 +106,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   };
   let handleStop = () => {
-    let { start, lastPoint } = store.getState();
-    // Determine if user just clicked and dispatch custom click event
-    if (Math.abs(start[0] - lastPoint[0]) < 3 && Math.abs(start[1] - lastPoint[1]) < 3) {
-      svgContainerEl.dispatchEvent(new CustomEvent("custom-click"))
-    }
     store.setState({
       isDragging: false,
     });
