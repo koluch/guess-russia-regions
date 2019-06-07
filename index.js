@@ -113,12 +113,13 @@ document.addEventListener("DOMContentLoaded", () => {
   let handleMove = ([x, y]) => {
     let state = store.getState();
     if (state.isDragging) {
+      let isDraggingActuallyStarted = Math.abs(state.start[0] - x) > 3 || Math.abs(state.start[1] - y) > 3;
       let diffX = x - state.lastPoint[0];
       let diffY = y - state.lastPoint[1];
       store.setState({
         offset: [state.offset[0] + diffX, state.offset[1] + diffY],
         lastPoint: [x, y],
-        isDraggingActuallyStarted: true,
+        isDraggingActuallyStarted: state.isDraggingActuallyStarted || isDraggingActuallyStarted,
       });
     }
   };
