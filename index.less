@@ -73,16 +73,22 @@ svg {
   justify-content: center;
 
   h1 {
-    font-size: 20px;
+    font-size: 16px;
     margin-bottom: 12px;
   }
 
   h2 {
     margin-bottom: 12px;
+    font-weight: normal;
+    font-style: italic;
   }
 
   h1, h2 {
     text-align: center;
+  }
+
+  p {
+    margin-top: 8px;
   }
 
   &::before {
@@ -97,12 +103,19 @@ svg {
     background: #000000db;
   }
 
-  > div {
-    padding: 10px;
+  &__body {
+    padding: 16px 24px;
     background: rgba(255, 255, 255, 0.76);
     z-index: 2;
     border-radius: @default-border-radius;
-    max-width: 80vw;
+    max-width: 600px;
+    margin: 20px;
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 16px;
   }
 }
 
@@ -166,7 +179,6 @@ button {
   font-size: 14px;
   border: 1px solid #717171;
   cursor: pointer;
-  margin: 8px;
 }
 
 body.INIT #start-modal {

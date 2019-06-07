@@ -14,61 +14,66 @@ const STATE = {
 const LEVEL_SIZE = 10;
 const MAX_MISTAKES = 3;
 
-function updateStats(state) {
-  const { currentRegionIndex, mistakes, gameState} = state;
-  document.querySelector('#stats').classList.toggle('hidden', gameState !== STATE.PLAYING);
-  document.querySelector('#stats .level span').textContent = `${Math.ceil((1 + currentRegionIndex) / LEVEL_SIZE)}/${Math.ceil(REGION_CODES.length / LEVEL_SIZE)}`
-  document.querySelector('#stats .mistakes span').textContent = `${mistakes}/${MAX_MISTAKES}`;
-}
-
-function updateGameState(state) {
-  const { gameState, regionCodes, currentRegionIndex, guessed } = state;
-  Object.entries(STATE).forEach(([key, value]) => {
-    window.document.body.classList.toggle(key, gameState === value);
-  });
-
-  if (gameState === STATE.PLAYING) {
-    const currentRegionCode = regionCodes[currentRegionIndex];
-    const currentRegion = REGIONS.find(({ code }) => code === currentRegionCode);
-    document.getElementById('currentRegion').textContent = currentRegion.title;
-  }
-
-  if (gameState === STATE.GAME_OVER) {
-    let msg;
-    let header;
-    if(guessed == 0) {
-      msg = "Вы не отгадали ни одного региона!";
-      header = "Слабовато!";
-    }
-    else if(guessed < 20) {
-      msg = "Вы отгадали только <b>" + pluralize(guessed, "регион") + "</b>";
-      header = "Слабовато!";
-    }
-    else if(guessed >= 20 && guessed < 50) {
-      msg = "Вы отгадали только <b>" + pluralize(guessed, "регион") + "</b>";
-      header = "Неплохо, но можно и лучше...";
-    }
-    else if(guessed >= 50 && guessed < REGIONS.length){
-      msg = "Вы отгадали <b>" + pluralize(guessed, "регион") + "</b>. Попробуйте еще раз, возможно получится отгадать все?";
-      header = "Здорово!";
-    }
-    else {
-      msg = "Вы отгадали все регионы! Поздравляем, вы настоящий патриот!";
-      header = "Невероятно!";
-    }
-
-    document.querySelector("#end-modal h1").innerHTML = header;
-    document.querySelector("#end-modal h2").innerHTML = msg;
-  }
-}
 
 document.addEventListener("DOMContentLoaded", () => {
+  // Init social buttons
+  const socialObject = social(document.getElementById('social'));
+
   const svgContainerEl = document.getElementById("svg-container");
   const svgEl = document.getElementById("svg");
 
+  function updateStats(state) {
+    const { currentRegionIndex, mistakes, gameState} = state;
+    document.querySelector('#stats').classList.toggle('hidden', gameState !== STATE.PLAYING);
+    document.querySelector('#stats .level span').textContent = `${Math.ceil((1 + currentRegionIndex) / LEVEL_SIZE)}/${Math.ceil(REGION_CODES.length / LEVEL_SIZE)}`
+    document.querySelector('#stats .mistakes span').textContent = `${mistakes}/${MAX_MISTAKES}`;
+  }
+
+  function updateGameState(state) {
+    const { gameState, regionCodes, currentRegionIndex, guessed } = state;
+    Object.entries(STATE).forEach(([key, value]) => {
+      window.document.body.classList.toggle(key, gameState === value);
+    });
+
+    if (gameState === STATE.PLAYING) {
+      const currentRegionCode = regionCodes[currentRegionIndex];
+      const currentRegion = REGIONS.find(({ code }) => code === currentRegionCode);
+      document.getElementById('currentRegion').textContent = currentRegion.title;
+    }
+
+    if (gameState === STATE.GAME_OVER) {
+      let msg;
+      let header;
+      if (guessed === 0) {
+        msg = "Вы не отгадали ни одного региона!";
+        header = "Слабовато!";
+      }
+      else if(guessed < 20) {
+        msg = "Вы отгадали только <b>" + pluralize(guessed, "регион") + "</b>";
+        header = "Слабовато!";
+      }
+      else if(guessed >= 20 && guessed < 50) {
+        msg = "Вы отгадали только <b>" + pluralize(guessed, "регион") + "</b>";
+        header = "Неплохо, но можно и лучше...";
+      }
+      else if(guessed >= 50 && guessed < REGIONS.length){
+        msg = "Вы отгадали <b>" + pluralize(guessed, "регион") + "</b>. Попробуйте еще раз, возможно получится отгадать все?";
+        header = "Здорово!";
+      }
+      else {
+        msg = "Вы отгадали все регионы! Поздравляем, вы настоящий патриот!";
+        header = "Невероятно!";
+      }
+
+      document.querySelector("#end-modal h1").innerHTML = header;
+      document.querySelector("#end-modal h2").innerHTML = msg;
+      socialObject.update(guessed);
+    }
+  }
+
   // Create state store and define update logic
   const store = createStore({
-    gameState: STATE.GAME_OVER,
+    gameState: STATE.INIT,
     isDragging: false,
     isDraggingActuallyStarted: false, // need to make sure that user actually dragged the map, to prevent click handling on regions after dragging
     lastPoint: [0, 0],
@@ -224,7 +229,4 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 1000);
   });
 
-  // Init social buttons
-  const socialObject = social(document.getElementById('social'));
-  window.socialObject = socialObject;
 });
