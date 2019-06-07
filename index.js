@@ -213,7 +213,7 @@ document.addEventListener("DOMContentLoaded", () => {
       mistakes: newMistakes,
     });
     setTimeout(() => {
-      if (newMistakes > MAX_MISTAKES) {
+      if (newMistakes > MAX_MISTAKES || state.currentRegionIndex === REGIONS.length - 1) {
         store.setState({
           gameState: STATE.GAME_OVER,
         });
