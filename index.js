@@ -19,9 +19,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // Init social buttons
   const socialObject = social(document.getElementById('social'));
 
-  const svgContainerEl = document.getElementById("svg-container");
-  const svgEl = document.getElementById("svg");
-
   function updateStats(state) {
     const { currentRegionIndex, mistakes, gameState} = state;
     document.querySelector('#stats').classList.toggle('hidden', gameState !== STATE.PLAYING);
@@ -74,80 +71,79 @@ document.addEventListener("DOMContentLoaded", () => {
   // Create state store and define update logic
   const store = createStore({
     gameState: STATE.INIT,
-    isDragging: false,
-    isDraggingActuallyStarted: false, // need to make sure that user actually dragged the map, to prevent click handling on regions after dragging
-    lastPoint: [0, 0],
-    offset: [0, 0],
-    zoom: 1,
+    draggingActive: false,
+    draggingActiveActuallyStarted: false, // need to make sure that user actually dragged the map, to prevent click handling on regions after dragging
+    draggingLastPoint: [0, 0],
+    draggingOffset: [0, 0],
+    draggingZoom: 1,
     regionCodes: [],
     currentRegionIndex: 0,
     guessed: 0,
     mistakes: 0,
   });
-  let update = (state, oldState) => {
-    const {isDragging, offset, zoom, currentRegionIndex, mistakes, gameState } = state;
-    svgContainerEl.classList.toggle('isDragging', isDragging);
-    svgEl.style.transform = `translateX(${offset[0]}px) translateY(${offset[1]}px) scale(${zoom})`;
-
-    updateStats(state);
-    updateGameState(state);
-  };
-  store.subscribe(update);
-  updateStats(store.getState());
-  updateGameState(store.getState());
 
   // Drag logic
+  const mapContainerEl = document.getElementById("map-container");
+  const mapZoomEl = document.getElementById("map-zoom");
+  const mapEl = document.getElementById("map");
+  let updateDragging = (state) => {
+    const {draggingActive, draggingOffset, draggingZoom } = state;
+    mapContainerEl.classList.toggle('isDragging', draggingActive);
+    mapZoomEl.style.transform = `scale(${draggingZoom})`;
+    mapEl.style.transform = `translateX(${draggingOffset[0]}px) translateY(${draggingOffset[1]}px)`;
+  };
   let handleStart = ([x, y]) => {
     store.setState({
-      isDragging: true,
-      isDraggingActuallyStarted: false,
+      draggingActive: true,
+      draggingActiveActuallyStarted: false,
       start: [x, y],
-      lastPoint: [x, y],
+      draggingLastPoint: [x, y],
     });
   };
   let handleStop = () => {
     store.setState({
-      isDragging: false,
+      draggingActive: false,
     });
   };
   let handleMove = ([x, y]) => {
     let state = store.getState();
-    if (state.isDragging) {
-      let isDraggingActuallyStarted = Math.abs(state.start[0] - x) > 3 || Math.abs(state.start[1] - y) > 3;
-      let diffX = x - state.lastPoint[0];
-      let diffY = y - state.lastPoint[1];
+    if (state.draggingActive) {
+      let draggingActiveActuallyStarted = Math.abs(state.start[0] - x) > 3 || Math.abs(state.start[1] - y) > 3;
+      let diffX = (x - state.draggingLastPoint[0]) / state.draggingZoom;
+      let diffY = (y - state.draggingLastPoint[1]) / state.draggingZoom;
       store.setState({
-        offset: [state.offset[0] + diffX, state.offset[1] + diffY],
-        lastPoint: [x, y],
-        isDraggingActuallyStarted: state.isDraggingActuallyStarted || isDraggingActuallyStarted,
+        draggingOffset: [state.draggingOffset[0] + diffX, state.draggingOffset[1] + diffY],
+        draggingLastPoint: [x, y],
+        draggingActiveActuallyStarted: state.draggingActiveActuallyStarted || draggingActiveActuallyStarted,
       });
     }
   };
   let handleZoom = (delta) => {
-    let newZoom = Math.max(0.25, Math.min(10, store.getState().zoom + (delta * 0.01)));
+    const state = store.getState();
+    const newZoom = Math.max(0.25, Math.min(10, state.draggingZoom + (delta * 0.01)));
     store.setState({
-      zoom: newZoom,
+      draggingZoom: newZoom,
     });
   };
-  svgContainerEl.addEventListener("mousedown", (e) => handleStart([e.clientX, e.clientY]));
-  svgContainerEl.addEventListener("mouseup", handleStop);
-  svgContainerEl.addEventListener("mousemove", (e) => handleMove([e.clientX, e.clientY]));
-  svgContainerEl.addEventListener("mouseleave", handleStop);
-  svgContainerEl.addEventListener("wheel", (e) => handleZoom(e.deltaY));
-  svgContainerEl.addEventListener("touchstart", (e) => {
+  mapContainerEl.addEventListener("mousedown", (e) => handleStart([e.clientX, e.clientY]));
+  mapContainerEl.addEventListener("mouseup", handleStop);
+  mapContainerEl.addEventListener("mousemove", (e) => handleMove([e.clientX, e.clientY]));
+  mapContainerEl.addEventListener("mouseleave", handleStop);
+  mapContainerEl.addEventListener("wheel", (e) => handleZoom(e.deltaY, [e.clientX, e.clientY]));
+  mapContainerEl.addEventListener("touchstart", (e) => {
     if (e.touches.length > 0) {
       let firstTouch = e.touches.item(0);
       handleStart([firstTouch.clientX, firstTouch.clientY])
     }
   }, false);
-  svgContainerEl.addEventListener("touchmove", (e) => {
+  mapContainerEl.addEventListener("touchmove", (e) => {
     if (e.touches.length > 0) {
       let firstTouch = e.touches.item(0);
       handleMove([firstTouch.clientX, firstTouch.clientY])
     }
   });
-  svgContainerEl.addEventListener("touchend", handleStop);
-  svgContainerEl.addEventListener("touchcancel", handleStop);
+  mapContainerEl.addEventListener("touchend", handleStop);
+  mapContainerEl.addEventListener("touchcancel", handleStop);
 
   // Start and end modal behaviour
   [
@@ -186,7 +182,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById('regions').addEventListener('click', (e) => {
     let state = store.getState();
 
-    if (state.isDraggingActuallyStarted) {
+    if (state.draggingActiveActuallyStarted) {
       return;
     }
 
@@ -223,5 +219,14 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }, 1000);
   });
+
+  let update = (state, oldState) => {
+    updateDragging(state);
+    updateStats(state);
+    updateGameState(state);
+  };
+  store.subscribe(update);
+  updateStats(store.getState());
+  updateGameState(store.getState());
 
 });
