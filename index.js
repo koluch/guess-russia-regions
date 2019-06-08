@@ -86,11 +86,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const mapContainerEl = document.getElementById("map-container");
   const mapZoomEl = document.getElementById("map-zoom");
   const mapEl = document.getElementById("map");
-  let updateDragging = (state) => {
+  let updateDragging = (state, oldState) => {
     const {draggingActive, draggingOffset, draggingZoom } = state;
     mapContainerEl.classList.toggle('isDragging', draggingActive);
-    mapZoomEl.style.transform = `scale(${draggingZoom})`;
-    mapEl.style.transform = `translateX(${draggingOffset[0]}px) translateY(${draggingOffset[1]}px)`;
+    if (state.draggingZoom !== oldState.draggingZoom) {
+      mapZoomEl.style.transform = `scale(${draggingZoom})`;
+    }
+    if (state.draggingOffset[0] !== oldState.draggingOffset[0] || state.draggingOffset[1] !== oldState.draggingOffset[1]) {
+      mapEl.style.transform = `translateX(${draggingOffset[0]}px) translateY(${draggingOffset[1]}px)`;
+    }
   };
   let handleStart = ([x, y]) => {
     store.setState({
@@ -221,12 +225,10 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   let update = (state, oldState) => {
-    updateDragging(state);
-    updateStats(state);
-    updateGameState(state);
+    updateDragging(state, oldState);
+    updateStats(state, oldState);
+    updateGameState(state, oldState);
   };
   store.subscribe(update);
-  updateStats(store.getState());
-  updateGameState(store.getState());
-
+  update(store.getState(), store.getState());
 });
