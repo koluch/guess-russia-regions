@@ -1,5 +1,5 @@
 import { createStore } from "set-state-store";
-import { REGIONS, REGION_CODES } from "./regions.js";
+import { REGIONS, REGION_CODES, REGION_TITLES } from "./regions.js";
 import { pluralize, shuffleArray } from "./utils.js";
 import social from "./social.js";
 
@@ -14,6 +14,13 @@ const STATE = {
 const LEVEL_SIZE = 10;
 const MAX_MISTAKES = 3;
 
+function $(selector) {
+  return document.querySelector(selector)
+}
+
+function $$(selector) {
+  return document.querySelectorAll(selector)
+}
 
 document.addEventListener("DOMContentLoaded", () => {
   // Init social buttons
@@ -21,9 +28,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function updateStats(state) {
     const { currentRegionIndex, mistakes, gameState} = state;
-    document.querySelector('#stats').classList.toggle('hidden', gameState !== STATE.PLAYING);
-    document.querySelector('#stats .level span').textContent = `${Math.ceil((1 + currentRegionIndex) / LEVEL_SIZE)}/${Math.ceil(REGION_CODES.length / LEVEL_SIZE)}`
-    document.querySelector('#stats .mistakes span').textContent = `${mistakes}/${MAX_MISTAKES}`;
+    $('#stats').classList.toggle('hidden', gameState !== STATE.PLAYING);
+    $('#stats .level span').textContent = `${Math.ceil((1 + currentRegionIndex) / LEVEL_SIZE)}/${Math.ceil(REGION_CODES.length / LEVEL_SIZE)}`
+    $('#stats .mistakes span').textContent = `${mistakes}/${MAX_MISTAKES}`;
   }
 
   function updateGameState(state) {
@@ -62,8 +69,8 @@ document.addEventListener("DOMContentLoaded", () => {
         header = "Невероятно!";
       }
 
-      document.querySelector("#end-modal h1").innerHTML = header;
-      document.querySelector("#end-modal h2").innerHTML = msg;
+      $("#end-modal h1").innerHTML = header;
+      $("#end-modal h2").innerHTML = msg;
       socialObject.update(guessed);
     }
   }
@@ -175,9 +182,12 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       // Reset painted regions
-      document.querySelectorAll('.land').forEach((x) => {
+      $$('.land').forEach((x) => {
         x.classList.remove('success');
         x.classList.remove('failed')
+      });
+      $$('#map-titles > span').forEach((x) => {
+        x.classList.remove('visible');
       })
     });
   });
@@ -200,7 +210,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const isSuccess = regionCode === currentRegionCode;
     let newMistakes = state.mistakes + (isSuccess ? 0 : 1);
 
-    document.getElementById(currentRegionCode).classList.add(isSuccess ? 'success' : 'failed')
+    document.getElementById(currentRegionCode).classList.add(isSuccess ? 'success' : 'failed');
+    document.getElementById(`${currentRegionCode}__title`).classList.add('visible');
 
     store.setState({
       gameState: isSuccess ? STATE.TRY_SUCCESS : STATE.TRY_FAILED,
@@ -222,6 +233,47 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
     }, 1000);
+  });
+
+  // Mouse over logic
+  const regions = document.getElementById('regions');
+  regions.addEventListener('mouseover', (e) => {
+    const regionPathEl = e.target;
+    if (!regionPathEl.classList.contains("land")) {
+      return;
+    }
+    const regionCode = regionPathEl.id;
+    $$('#map-titles > .hover').forEach((x) => {
+      x.classList.remove("hover");
+    });
+    const titleEl = $(`#${regionCode}__title`);
+    titleEl.classList.add('hover');
+  });
+  regions.addEventListener('mouseout', (e) => {
+    $$('#map-titles > .hover').forEach((x) => {
+      x.classList.remove("hover");
+    });
+  });
+
+  // Render titles
+  REGIONS.forEach(({ code, title, titleParams = {} }) => {
+    const regionPathEl = $(`#${code}`)
+    const bounds = regionPathEl.getBoundingClientRect();
+
+    const offset = titleParams.offset || [0, 0];
+    const width = titleParams.width || bounds.width;
+    const size = titleParams.size;
+    const style = [
+      ['left', `${bounds.left + bounds.width / 2 + offset[0]}px`],
+      ['top', `${bounds.top + bounds.height / 2 + offset[1]}px`],
+      ['width', `${width}px`],
+      ['font-size', size ? `${size}px` : null]
+    ];
+
+    // const textEl = document.createElement('text');
+    const textEl = $(`#${code}__title`);
+    textEl.textContent = title;
+    textEl.style = style.filter(([key, value]) => value).map((prop) => prop.join(':')).join(';');
   });
 
   let update = (state, oldState) => {
