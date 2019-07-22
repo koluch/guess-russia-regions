@@ -1,6 +1,7 @@
-import { createStore } from "set-state-store/index.es6.js";
+//@flow strict
+import { createStore } from "set-state-store";
 import { REGIONS, REGION_CODES, REGION_TITLES } from "./regions.js";
-import { pluralize, shuffleArray } from "./utils.js";
+import { $, $$, pluralize, shuffleArray } from "./utils.js";
 import social from "./social.js";
 
 const STATE = {
@@ -14,26 +15,18 @@ const STATE = {
 const LEVEL_SIZE = 10;
 const MAX_MISTAKES = 3;
 
-function $(selector) {
-  return document.querySelector(selector)
-}
-
-function $$(selector) {
-  return document.querySelectorAll(selector)
-}
-
 document.addEventListener("DOMContentLoaded", () => {
   // Init social buttons
-  const socialObject = social(document.getElementById('social'));
+  const socialObject = social($('social'));
 
-  function updateStats(state) {
+  function updateStats(state, oldState) {
     const { currentRegionIndex, mistakes, gameState} = state;
     $('#stats').classList.toggle('hidden', gameState !== STATE.PLAYING);
     $('#stats .level span').textContent = `${Math.ceil((1 + currentRegionIndex) / LEVEL_SIZE)}/${Math.ceil(REGION_CODES.length / LEVEL_SIZE)}`
     $('#stats .mistakes span').textContent = `${mistakes}/${MAX_MISTAKES}`;
   }
 
-  function updateGameState(state) {
+  function updateGameState(state, oldState) {
     const { gameState, regionCodes, currentRegionIndex, guessed } = state;
     Object.entries(STATE).forEach(([key, value]) => {
       window.document.body.classList.toggle(key, gameState === value);
@@ -42,7 +35,10 @@ document.addEventListener("DOMContentLoaded", () => {
     if (gameState === STATE.PLAYING) {
       const currentRegionCode = regionCodes[currentRegionIndex];
       const currentRegion = REGIONS.find(({ code }) => code === currentRegionCode);
-      document.getElementById('currentRegion').textContent = currentRegion.title;
+      if (currentRegion == null) {
+        throw new Error(`Region not found: "${currentRegionCode}"`);
+      }
+      $('#currentRegion').textContent = currentRegion.title;
     }
 
     if (gameState === STATE.GAME_OVER) {
@@ -90,9 +86,9 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Drag logic
-  const mapContainerEl = document.getElementById("map-container");
-  const mapZoomEl = document.getElementById("map-zoom");
-  const mapEl = document.getElementById("map");
+  const mapContainerEl = $("#map-container");
+  const mapZoomEl = $("#map-zoom");
+  const mapEl = $("#map");
   let updateDragging = (state, oldState) => {
     const {draggingActive, draggingOffset, draggingZoom } = state;
     mapContainerEl.classList.toggle('isDragging', draggingActive);
@@ -136,20 +132,20 @@ document.addEventListener("DOMContentLoaded", () => {
       draggingZoom: newZoom,
     });
   };
-  mapContainerEl.addEventListener("mousedown", (e) => handleStart([e.clientX, e.clientY]));
+  mapContainerEl.addEventListener("mousedown", (e: MouseEvent) => handleStart([e.clientX, e.clientY]));
   mapContainerEl.addEventListener("mouseup", handleStop);
-  mapContainerEl.addEventListener("mousemove", (e) => handleMove([e.clientX, e.clientY]));
+  mapContainerEl.addEventListener("mousemove", (e: MouseEvent) => handleMove([e.clientX, e.clientY]));
   mapContainerEl.addEventListener("mouseleave", handleStop);
-  mapContainerEl.addEventListener("wheel", (e) => handleZoom(e.deltaY, [e.clientX, e.clientY]));
-  mapContainerEl.addEventListener("touchstart", (e) => {
-    if (e.touches.length > 0) {
-      let firstTouch = e.touches.item(0);
+  mapContainerEl.addEventListener("wheel", (e: WheelEvent) => handleZoom(e.deltaY));
+  mapContainerEl.addEventListener("touchstart", (e: TouchEvent) => {
+    const firstTouch = e.touches.item(0);
+    if (firstTouch != null) {
       handleStart([firstTouch.clientX, firstTouch.clientY])
     }
   }, false);
-  mapContainerEl.addEventListener("touchmove", (e) => {
-    if (e.touches.length > 0) {
-      let firstTouch = e.touches.item(0);
+  mapContainerEl.addEventListener("touchmove", (e: TouchEvent) => {
+    const firstTouch = e.touches.item(0);
+    if (firstTouch != null) {
       handleMove([firstTouch.clientX, firstTouch.clientY])
     }
   });
@@ -158,8 +154,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Start and end modal behaviour
   [
-    document.getElementById('start-modal'),
-    document.getElementById('end-modal')
+    $('start-modal'),
+    $('end-modal')
   ].forEach((modal) => {
     modal.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -193,7 +189,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Region click behaviour
-  document.getElementById('regions').addEventListener('click', (e) => {
+  $('#regions').addEventListener('click', (e: MouseEvent) => {
     let state = store.getState();
 
     if (state.draggingActiveActuallyStarted) {
@@ -201,55 +197,59 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const regionPathEl = e.target;
-    if (!regionPathEl.classList.contains("land")) {
-      return;
-    }
-    const regionCode = regionPathEl.id;
-    const currentRegionIndex = state.currentRegionIndex;
-    const currentRegionCode = state.regionCodes[currentRegionIndex];
-    const isSuccess = regionCode === currentRegionCode;
-    let newMistakes = state.mistakes + (isSuccess ? 0 : 1);
-
-    document.getElementById(currentRegionCode).classList.add(isSuccess ? 'success' : 'failed');
-    document.getElementById(`${currentRegionCode}__title`).classList.add('visible');
-
-    store.setState({
-      gameState: isSuccess ? STATE.TRY_SUCCESS : STATE.TRY_FAILED,
-      guessed: state.guessed + (isSuccess ? 1 : 0),
-      mistakes: newMistakes,
-    });
-    setTimeout(() => {
-      if (newMistakes > MAX_MISTAKES || state.currentRegionIndex === REGIONS.length - 1) {
-        store.setState({
-          gameState: STATE.GAME_OVER,
-        });
-      } else {
-        const state = store.getState();
-        const newRegionIndex = state.currentRegionIndex + 1;
-        store.setState({
-          gameState: STATE.PLAYING,
-          currentRegionIndex: newRegionIndex,
-          mistakes: newRegionIndex % LEVEL_SIZE === 0 ? 0 : state.mistakes,
-        });
+    if (regionPathEl instanceof HTMLElement) {
+      if (!regionPathEl.classList.contains("land")) {
+        return;
       }
-    }, 1000);
+      const regionCode = regionPathEl.id;
+      const currentRegionIndex = state.currentRegionIndex;
+      const currentRegionCode = state.regionCodes[currentRegionIndex];
+      const isSuccess = regionCode === currentRegionCode;
+      let newMistakes = state.mistakes + (isSuccess ? 0 : 1);
+
+      $(`#${currentRegionCode}`).classList.add(isSuccess ? 'success' : 'failed');
+      $(`#${currentRegionCode}__title`).classList.add('visible');
+
+      store.setState({
+        gameState: isSuccess ? STATE.TRY_SUCCESS : STATE.TRY_FAILED,
+        guessed: state.guessed + (isSuccess ? 1 : 0),
+        mistakes: newMistakes,
+      });
+      setTimeout(() => {
+        if (newMistakes > MAX_MISTAKES || state.currentRegionIndex === REGIONS.length - 1) {
+          store.setState({
+            gameState: STATE.GAME_OVER,
+          });
+        } else {
+          const state = store.getState();
+          const newRegionIndex = state.currentRegionIndex + 1;
+          store.setState({
+            gameState: STATE.PLAYING,
+            currentRegionIndex: newRegionIndex,
+            mistakes: newRegionIndex % LEVEL_SIZE === 0 ? 0 : state.mistakes,
+          });
+        }
+      }, 1000);
+    }
   });
 
   // Mouse over logic
-  const regions = document.getElementById('regions');
-  regions.addEventListener('mouseover', (e) => {
+  const regionsEl = $('#regions');
+  regionsEl.addEventListener('mouseover', (e: MouseEvent) => {
     const regionPathEl = e.target;
-    if (!regionPathEl.classList.contains("land")) {
-      return;
+    if (regionPathEl instanceof HTMLElement) {
+      if (!regionPathEl.classList.contains("land")) {
+        return;
+      }
+      const regionCode = regionPathEl.id;
+      $$('#map-titles > .hover').forEach((x) => {
+        x.classList.remove("hover");
+      });
+      const titleEl = $(`#${regionCode}__title`);
+      titleEl.classList.add('hover');
     }
-    const regionCode = regionPathEl.id;
-    $$('#map-titles > .hover').forEach((x) => {
-      x.classList.remove("hover");
-    });
-    const titleEl = $(`#${regionCode}__title`);
-    titleEl.classList.add('hover');
   });
-  regions.addEventListener('mouseout', (e) => {
+  regionsEl.addEventListener('mouseout', (e: MouseEvent) => {
     $$('#map-titles > .hover').forEach((x) => {
       x.classList.remove("hover");
     });
@@ -257,23 +257,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Render titles
   REGIONS.forEach(({ code, title, titleParams = {} }) => {
-    const regionPathEl = $(`#${code}`)
+    const regionPathEl = $(`#${code}`);
     const bounds = regionPathEl.getBoundingClientRect();
 
     const offset = titleParams.offset || [0, 0];
-    const width = titleParams.width || bounds.width;
+    const width = titleParams.width != null ? titleParams.width : bounds.width;
     const size = titleParams.size;
-    const style = [
-      ['left', `${bounds.left + bounds.width / 2 + offset[0]}px`],
-      ['top', `${bounds.top + bounds.height / 2 + offset[1]}px`],
-      ['width', `${width}px`],
-      ['font-size', size ? `${size}px` : null]
-    ];
 
-    // const textEl = document.createElement('text');
     const textEl = $(`#${code}__title`);
     textEl.textContent = title;
-    textEl.style = style.filter(([key, value]) => value).map((prop) => prop.join(':')).join(';');
+    const style = new CSSStyleDeclaration();
+    style.left = `${bounds.left + bounds.width / 2 + offset[0]}px`;
+    style.top = `${bounds.top + bounds.height / 2 + offset[1]}px`;
+    style.width = `${width}px`;
+    style.fontSize = size != null ? `${size}px` : style.fontSize;
+    textEl.style = style;
   });
 
   let update = (state, oldState) => {

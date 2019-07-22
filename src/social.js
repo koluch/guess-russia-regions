@@ -1,6 +1,6 @@
 import { pluralize } from "./utils.js";
 
-export default function (containerEl) {
+export default function (containerEl: HTMLElement) {
   // Twitter init
   // window.a = (function (d, s, id) {
   //   var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
@@ -16,7 +16,7 @@ export default function (containerEl) {
   const promises = [];
 
   promises.push(new Promise((resolve) => {
-    window.twttr = (function(d, s, id) {
+    window.twttr = (function(d: any, s: any, id: any) {
       var js, fjs = d.getElementsByTagName(s)[0],
         t = window.twttr || {};
       if (d.getElementById(id)) return t;
@@ -81,7 +81,7 @@ export default function (containerEl) {
   }));
 
   let result = {
-    update: function(guessed) {
+    update: function(guessed: number) {
       var resultMsg = 'Хорошо ли вы знаете Россию? Я отгадал ' + pluralize(guessed, "регион");
 
       // Update twitter button

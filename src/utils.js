@@ -1,3 +1,4 @@
+//@flow strict
 /**
  * Shuffles array in place. ES6 version
  *
@@ -5,10 +6,12 @@
  *
  * @param {Array} a items An array containing the items.
  */
-export function shuffleArray(a) {
+export function shuffleArray<T>(a: T[]) {
   for (let i = a.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
+    const tmp = a[j];
+    a[j] = a[i];
+    a[i] = tmp
   }
   return a;
 }
@@ -19,7 +22,7 @@ const KNOWN_WORDS = {
   }
 };
 
-export function pluralize(num, text) {
+export function pluralize(num: number, text: string) {
   const map = KNOWN_WORDS[text];
   let result;
   if(map) {
@@ -37,4 +40,17 @@ export function pluralize(num, text) {
     result = text;
   }
   return num + " " + result;
+}
+
+export function $(selector: string): HTMLElement {
+  const el = document.querySelector(selector);
+  if (el == null) {
+    throw new Error(`Element not found. Selector: "${selector}"`);
+  }
+  return el
+}
+
+export function $$(selector: string): HTMLElement[] {
+  const els = document.querySelectorAll(selector);
+  return [...els]
 }

@@ -1,4 +1,7 @@
-export const REGIONS = [
+//@flow strict
+import type { TRegion } from "./types.js";
+
+export const REGIONS: TRegion[] = [
   {
     "title": "Московская область",
     "code": "RU-MOS",
