@@ -1,4 +1,4 @@
-import { createStore } from "set-state-store";
+import { createStore } from "set-state-store/index.es6.js";
 import { REGIONS, REGION_CODES, REGION_TITLES } from "./regions.js";
 import { pluralize, shuffleArray } from "./utils.js";
 import social from "./social.js";
