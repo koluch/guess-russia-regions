@@ -3,6 +3,7 @@ import { createStore } from "set-state-store";
 import { REGIONS, REGION_CODES, REGION_TITLES } from "./regions.js";
 import { $, $$, pluralize, shuffleArray } from "./utils.js";
 import social from "./social.js";
+import type { IPoint } from "./types.js";
 
 const STATE = {
   INIT: "INIT",
@@ -14,6 +15,20 @@ const STATE = {
 
 const LEVEL_SIZE = 10;
 const MAX_MISTAKES = 3;
+
+type IState = {
+  gameState: $Values<typeof STATE>,
+  draggingActive: boolean,
+  draggingActiveActuallyStarted: boolean, // need to make sure that user actually dragged the map, to prevent click handling on regions after dragging
+  draggingLastPoint: IPoint,
+  draggingOffset: IPoint,
+  draggingZoom: number,
+  regionCodes: string[],
+  currentRegionIndex: number,
+  guessed: number,
+  mistakes: number,
+  start: IPoint
+}
 
 document.addEventListener("DOMContentLoaded", () => {
   // Init social buttons
@@ -72,7 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Create state store and define update logic
-  const store = createStore({
+  const initialState: IState = {
     gameState: STATE.INIT,
     draggingActive: false,
     draggingActiveActuallyStarted: false, // need to make sure that user actually dragged the map, to prevent click handling on regions after dragging
@@ -83,7 +98,9 @@ document.addEventListener("DOMContentLoaded", () => {
     currentRegionIndex: 0,
     guessed: 0,
     mistakes: 0,
-  });
+    start: [0, 0]
+  };
+  const store = createStore(initialState);
 
   // Drag logic
   const mapContainerEl = $("#map-container");
